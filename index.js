@@ -3,8 +3,9 @@
 
 const express = require("express");
 const path = require("path");
-// Import routes.js
-const routes = require("./routes");
+// Import routes
+const htmlRoutes = require("./routes/htmlRoutes");
+const apiRoutes = require("./routes/apiRoutes");
 
 // EXPRESS CONFIGURATION
 // This sets up the basic properties for our express server
@@ -20,15 +21,21 @@ const PORT = process.env.PORT || 8080;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+
 // ROUTER
 // The below points our server to a series of "route" files.
 // These routes give our server a "map" of how to respond when users visit or request data from various URLs.
 
 
-
 // Set a static folder
 app.use(express.static(path.join(__dirname, "public")));
-app.use("/", routes);
+
+// Set the home page to its file
+app.use("/", htmlRoutes);
+
+// Set the API file path
+app.use("/api/notes", apiRoutes);
+
 
 // LISTENER
 // The below code effectively "starts" our server
