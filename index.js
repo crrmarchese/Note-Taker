@@ -32,6 +32,8 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Set the home page to its file
 app.use("/", htmlRoutes);
+app.use("/notes", htmlRoutes);
+app.use("*", htmlRoutes);
 
 // Set the API file path
 app.use("/api/notes", apiRoutes);
