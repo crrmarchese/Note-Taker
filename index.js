@@ -30,7 +30,7 @@ app.use(express.json());
 // Set a static folder
 app.use(express.static(path.join(__dirname, "public")));
 
-
+// API routes always first, HTML last -> browser reads top to bottom
 // Set the API file path
 app.use(apiRoutes);
 
