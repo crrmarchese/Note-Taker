@@ -5,15 +5,15 @@ const fs = require("fs");
 const uuid = require ("uuid");
 const dbData = require("../db/db.json");
 
-// Read DB file and put data in variable
-router.get("/api/notes", (req, res) => {
-    fs.readFile("./db/db.json", 'utf8', (err, data) => {
-        if (err) throw err;
-        let getNotes = JSON.parse(data);
-        res.json(getNotes);
-    });
+// Get dbData
+router.get("/api/notes", async (req, res) => {
+        try {
+            res.json(dbData);
+    
+        } catch (err) {
+            res.status(500).end();
+         }
 });
-
 
 // Add a new note--Create 
 // req.body is available since we're using the body parsing middleware
