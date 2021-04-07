@@ -1,67 +1,34 @@
 // DEPENDENCIES
 const router = require("express").Router();
-const fs = require("fs");
-// Generate unique ids by using https://www.npmjs.com/package/uuid
-const uuid = require ("uuid");
-const dbData = require("../db/db.json");
+const store = require('../db/store');
 
-// Get dbData
-router.get("/api/notes", async (req, res) => {
-        try {
-            res.json(dbData);
-    
-        } catch (err) {
-            res.status(500).end();
-         }
-});
+// GET "api/notes" responds with all notes from the DB
+router.get('/notes', (req, res) => {
+    store
+      .getNotes()
+      .then((notes) => {
+        return res.json(notes);
+      })
+      .catch((err) => res.status(500).json(err));
+  });
 
 // Add a new note--Create 
 // req.body is available since we're using the body parsing middleware
-router.post("/api/notes", (req, res) => {
-    let newNote = {
-        id: uuid.v4(),
-        title: req.body.title,
-        text: req.body.text
-    }; 
-    
-    // Read DB file, add newNote to array and write changes
-    fs.readFile(".db/db.json", 'utf8', (err, data) => {
-        
-        if (err) throw err;
-        let getNotes = JSON.parse(data);
-        getNotes.push(newNote);
- 
-        fs.writeFile(".db/db.json", JSON.stringify(getNotes), err => {
-            if (err) throw err;
-            res.send(dbData);
-        });
- 
-    });
- 
- });
+router.post('/notes', (req, res) => {
+    store
+      .addNote(req.body)
+      .then((note) => res.json(note))
+      .catch((err) => res.status(500).json(err));
+  });
  
 
- // Update note
-router.put("/api/notes/:id", (req, res) => {
-    const findId = dbData.some(data => data.id === parseInt(req.params.id));
+// DELETE "/api/notes" deletes the note with an id equal to req.params.id
+router.delete('/notes/:id', (req, res) => {
+    store
+      .removeNote(req.params.id)
+      .then(() => res.json({ ok: true }))
+      .catch((err) => res.status(500).json(err));
+  });
  
-    if(findId) {
-       const updateNote = req.body;
-       dbData.forEach(data => {
-           if (data.id === parseInt(req.params.id)){
-              data.title = updateNote.title ? updateNote.title : data.title;
-              data.text = updateNote.text ? updateNote.text : data.text;
- 
-              res.json({msg: "Note updated", data});
-           }
-       });
-    } else {
-        res.status(400).json({msg: `No record with the id of ${req.params.id}`});
-    }       
- 
- });
-
-
-
 
 module.exports = router;
