@@ -32,10 +32,10 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // API routes always first, HTML last -> browser reads top to bottom
 // Set the API file path
-app.use(apiRoutes);
+app.use('/api', apiRoutes);
 
 // Set the home page to its file
-app.use(htmlRoutes);
+app.use('/', htmlRoutes);
  
 
 
